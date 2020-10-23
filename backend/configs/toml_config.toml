@@ -2,5 +2,7 @@ port = ":8000"
 log_level = "debug"
 
 [store]
-database_url = "mongodb://localhost:27017/?user=likeisaid&password=saidilike"
-database = "likeisaid"
+database_url = "mongodb://localhost:27017"
+database_name = "likeisaid"
+user = "likeisaid"
+password = "saidilike"

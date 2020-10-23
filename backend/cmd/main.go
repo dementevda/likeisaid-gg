@@ -4,6 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/BurntSushi/toml"
 	"github.com/dementevda/likeisaid-gg/backend/cmd/api"
@@ -26,8 +29,20 @@ func main() {
 	}
 
 	api := api.New(config)
+	CloseHandler(api)
+
 	if err := api.Start(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("finish")
+}
+
+func CloseHandler(api *api.API) {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("\r- Ctrl+C pressed in Terminal")
+		api.Stop()
+		os.Exit(0)
+	}()
 }

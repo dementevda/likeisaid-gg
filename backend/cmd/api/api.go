@@ -14,7 +14,7 @@ type API struct {
 	config *Config
 	logger *logrus.Logger
 	router *mux.Router
-	store  *store.Store
+	store  *store.MongoStorage
 }
 
 // New returns new api server
@@ -32,15 +32,19 @@ func (api *API) Start() error {
 		return err
 	}
 
-	api.configureRouter()
-
 	if err := api.configureStore(); err != nil {
 		return err
 	}
+	api.configureRouter()
 
 	api.logger.Info("Starting API")
 
 	return http.ListenAndServe(api.config.Port, api.router)
+}
+
+// Stop ...
+func (api *API) Stop() {
+	api.store.Close()
 }
 
 func (api *API) configureLogger() error {
@@ -56,6 +60,7 @@ func (api *API) configureLogger() error {
 
 func (api *API) configureRouter() {
 	api.router.HandleFunc("/hello", controllers.HandleHello())
+	api.router.HandleFunc("/user", controllers.HandleAddUser(api.store)).Methods("POST")
 }
 
 func (api *API) configureStore() error {

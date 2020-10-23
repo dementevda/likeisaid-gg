@@ -7,23 +7,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-// Store for API
-type Store struct {
+// MongoStorage for API
+type MongoStorage struct {
 	config *Config
 	client *mongo.Client
-	db     *mongo.Database
+	Db     *mongo.Database
 }
 
-//New returns Store
-func New(config *Config) *Store {
-	return &Store{
+//New ...
+func New(config *Config) *MongoStorage {
+	return &MongoStorage{
 		config: config,
 	}
 }
 
-// Open connection to store
-func (s *Store) Open() error {
-	client, err := mongo.NewClient(options.Client().ApplyURI(s.config.DatabaseURL))
+// Open connection to storage
+func (s *MongoStorage) Open() error {
+	opts := options.Client().ApplyURI(s.config.DatabaseURL).SetAuth(options.Credential{AuthSource: s.config.DatabaseName, Username: s.config.DatabaseUser, Password: s.config.DatabasePasswd})
+	client, err := mongo.NewClient(opts)
 	if err != nil {
 		return err
 	}
@@ -37,12 +38,12 @@ func (s *Store) Open() error {
 	}
 
 	s.client = client
-	s.db = client.Database("likeisaid")
+	s.Db = client.Database(s.config.DatabaseName)
 
 	return nil
 }
 
-// Close connection to store
-func (s *Store) Close() {
+// Close connection to storage
+func (s *MongoStorage) Close() {
 	s.client.Disconnect(context.TODO())
 }
