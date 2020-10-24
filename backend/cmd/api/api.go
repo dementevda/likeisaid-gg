@@ -3,8 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api/controllers"
 	"github.com/dementevda/likeisaid-gg/backend/cmd/store"
+	"github.com/dementevda/likeisaid-gg/backend/cmd/store/mongostorage"
+
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
@@ -14,7 +15,7 @@ type API struct {
 	config *Config
 	logger *logrus.Logger
 	router *mux.Router
-	store  *store.MongoStorage
+	store  store.Store
 }
 
 // New returns new api server
@@ -59,12 +60,12 @@ func (api *API) configureLogger() error {
 }
 
 func (api *API) configureRouter() {
-	api.router.HandleFunc("/hello", controllers.HandleHello())
-	api.router.HandleFunc("/user", controllers.HandleAddUser(api.store)).Methods("POST")
+	api.router.HandleFunc("/hello", api.handleHello()).Methods("GET")
+	api.router.HandleFunc("/user", api.handleAddUser(api.store)).Methods("POST")
 }
 
 func (api *API) configureStore() error {
-	store := store.New(api.config.Store)
+	store := mongostorage.New(api.config.Store)
 	if err := store.Open(); err != nil {
 		return err
 	}
