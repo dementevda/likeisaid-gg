@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/dementevda/likeisaid-gg/backend/cmd/api/views"
 	"github.com/dementevda/likeisaid-gg/backend/cmd/store"
 	"github.com/dementevda/likeisaid-gg/backend/cmd/store/mongostorage"
 
@@ -60,8 +61,11 @@ func (api *API) configureLogger() error {
 }
 
 func (api *API) configureRouter() {
-	api.router.HandleFunc("/hello", api.handleHello()).Methods("GET")
-	api.router.HandleFunc("/user", api.handleAddUser(api.store)).Methods("POST")
+	api.router.HandleFunc("/hello", views.HandleHello()).Methods("GET")
+	api.router.HandleFunc("/users", views.HandleUsers(api.store)).Methods("POST")
+	api.router.HandleFunc("/users/{login}", views.HandleUser(api.store)).Methods("GET")
+	api.router.HandleFunc("/tasks", views.HandleTasks(api.store)).Methods("POST", "GET")
+	api.router.HandleFunc("/tasks/{id}", views.HandleTask(api.store)).Methods("GET")
 }
 
 func (api *API) configureStore() error {

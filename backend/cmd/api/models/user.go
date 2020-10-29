@@ -8,11 +8,17 @@ import (
 
 // User model
 type User struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	Email    string             `bson:"email"`
-	Password string             `bson:"password"`
+	*CreateUser `bson:",inline"`
+	ID          primitive.ObjectID   `bson:"_id,omitempty" json:"id"`
+	Tasks       []primitive.ObjectID `bson:"tasks" json:"tasks"`
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("%s, %s, %s", u.ID, u.Email, u.Password)
+	return fmt.Sprintf("<user: %s>", u.Email)
+}
+
+type CreateUser struct {
+	Email      string `bson:"email" json:"email"  valid:"required,email"`
+	Login      string `bson:"login" json:"login" valid:"required"`
+	AuthEngine string `bson:"auth_engine" json:"auth_engine" valid:"required,in(google|yandex|github|self)"`
 }

@@ -6,6 +6,6 @@ import "github.com/dementevda/likeisaid-gg/backend/cmd/api/models"
 type Store interface {
 	Open() error
 	Close()
-	AddUser(u *models.User) (*models.User, error)
-	FindUser(u *models.User) (*models.User, error)
+	AddUser(u *models.CreateUser) (*models.User, error)
+	FindUser(login string) (*models.User, error)
 }

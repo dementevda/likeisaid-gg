@@ -1,12 +1,21 @@
 [
     {
-        "createIndexes": "tasks",
+        "createIndexes": "users",
         "indexes": [
             {
                 "key": {
                     "email": 1
                 },
                 "name": "unique_email",
+                "unique": true,
+                "background": true
+            },
+            {
+                "key": {
+                    "login": 1,
+                    "auth_engine": 1
+                },
+                "name": "unique_auth_engine",
                 "unique": true,
                 "background": true
             }

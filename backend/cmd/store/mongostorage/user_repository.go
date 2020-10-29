@@ -9,23 +9,25 @@ import (
 )
 
 // AddUser adds user to database
-func (s *MongoStorage) AddUser(u *models.User) (*models.User, error) {
-	u.Email = "qwe@qwe"
+func (s *MongoStorage) AddUser(u *models.CreateUser) (*models.User, error) {
 	added, err := s.Db.Collection("users").InsertOne(context.TODO(), u)
-	u.ID = added.InsertedID.(primitive.ObjectID)
 	if err != nil {
 		return nil, err
 	}
-	return u, nil
+	user := models.User{CreateUser: u, ID: added.InsertedID.(primitive.ObjectID)}
+
+	return &user, nil
 
 }
 
 // FindUser search user in database
-func (s *MongoStorage) FindUser(u *models.User) (*models.User, error) {
+func (s *MongoStorage) FindUser(login string) (*models.User, error) {
 	user := &models.User{}
-	err := s.Db.Collection("users").FindOne(context.TODO(), bson.M{"email": u.Email}).Decode(user)
+
+	err := s.Db.Collection("users").FindOne(context.TODO(), bson.M{"login": login}).Decode(user)
 	if err != nil {
 		return nil, err
 	}
+
 	return user, err
 }

@@ -10,6 +10,7 @@ import (
 // Task model
 type Task struct {
 	ID          primitive.ObjectID  `bson:"_id,omitempty"`
+	UserEmail   string              `bson:"user_email"`
 	Title       string              `bson:"title"`
 	Defendant   string              `bson:"defendant"`
 	Description string              `bson:"description,omitempty"`
