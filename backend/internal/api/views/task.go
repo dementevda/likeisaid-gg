@@ -68,14 +68,20 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 // HandleTask for get/update/delete current task
 func HandleTask(s store.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO permissiions checker
+		taskID := mux.Vars(r)["id"]
+
+		task := checkTaskExists(s, taskID)
+		if task == nil {
+			handleError(w, http.StatusNotFound, &apierrors.TaskError{Message: "", ErrType: "Not Found"})
+			return
+		}
+		if task.UserEmail != r.Context().Value(apimiddlewares.CtxUserKey).(*models.User).Email {
+			handleError(w, http.StatusForbidden, &apierrors.TaskError{Message: "Not your task", ErrType: ""})
+			return
+		}
+
+		// PATCH
 		if r.Method == http.MethodPatch {
-			taskID := mux.Vars(r)["id"]
-			task := checkTaskExists(s, taskID)
-			if task == nil {
-				handleError(w, http.StatusNotFound, &apierrors.TaskError{Message: "", ErrType: "Not Found"})
-				return
-			}
 
 			decoder := json.NewDecoder(r.Body)
 			updTaskJSON := &models.UpdateTaskJson{}
@@ -96,8 +102,8 @@ func HandleTask(s store.Store) http.HandlerFunc {
 			return
 		}
 
+		// DELETE
 		if r.Method == http.MethodDelete {
-			taskID := mux.Vars(r)["id"]
 			s.DeleteTask(taskID)
 		}
 	}
