@@ -81,7 +81,7 @@ func HandleTask(s store.Store) http.HandlerFunc {
 			updTaskJSON := &models.UpdateTaskJson{}
 
 			if err := decoder.Decode(updTaskJSON); err != nil {
-				handleError(w, http.BadRequestotFound, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
+				handleError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
 				return
 			}
 
