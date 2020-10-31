@@ -31,3 +31,16 @@ func (s *MongoStorage) FindUser(login string) (*models.User, error) {
 
 	return user, err
 }
+
+// GetUserByEmail ...
+func (s *MongoStorage) GetUserByEmail(email string) (*models.User, error) {
+	user := &models.User{}
+
+	err := s.Db.Collection("users").FindOne(context.TODO(), bson.M{"email": email}).Decode(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, err
+
+}

@@ -57,7 +57,6 @@ func HandleUsers(s store.Store) http.HandlerFunc {
 		json.NewEncoder(w).Encode(user)
 		fmt.Fprintln(w)
 		return
-
 	}
 }
 
@@ -80,7 +79,6 @@ func HandleUser(s store.Store) http.HandlerFunc {
 			return
 		}
 
-		// fmt.Println(user.Email, " --- ", user.ID)
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(user)
 		fmt.Fprintln(w)

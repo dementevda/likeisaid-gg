@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/apimiddlewares"
 	"github.com/dementevda/likeisaid-gg/backend/internal/api/views"
 	"github.com/dementevda/likeisaid-gg/backend/internal/store"
 	"github.com/dementevda/likeisaid-gg/backend/internal/store/mongostorage"
@@ -61,11 +62,14 @@ func (api *API) configureLogger() error {
 }
 
 func (api *API) configureRouter() {
+	// todo not use then create user
+	api.router.Use(apimiddlewares.AuthUser(api.store))
+
 	api.router.HandleFunc("/hello", views.HandleHello()).Methods("GET")
 	api.router.HandleFunc("/users", views.HandleUsers(api.store)).Methods("POST")
 	api.router.HandleFunc("/users/{login}", views.HandleUser(api.store)).Methods("GET")
 	api.router.HandleFunc("/tasks", views.HandleTasks(api.store)).Methods("POST", "GET")
-	api.router.HandleFunc("/tasks/{id}", views.HandleTask(api.store)).Methods("GET")
+	api.router.HandleFunc("/tasks/{id}", views.HandleTask(api.store)).Methods("PATCH", "DELETE")
 }
 
 func (api *API) configureStore() error {

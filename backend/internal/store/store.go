@@ -8,4 +8,11 @@ type Store interface {
 	Close()
 	AddUser(u *models.CreateUser) (*models.User, error)
 	FindUser(login string) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
+
+	AddTask(*models.CreateTask) (*models.Task, error)
+	GetUserTasks(string) ([]*models.Task, error)
+	GetTaskByID(string) (*models.Task, error)
+	EditTask(*models.Task) error
+	DeleteTask(string) error
 }
