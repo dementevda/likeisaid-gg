@@ -1,5 +1,5 @@
 build:
-	go build -v ./cmd/main.go
+	go build -v ./cmd/api/main.go
 
 run:
 	go run ./cmd/api/main.go
