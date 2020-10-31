@@ -3,7 +3,6 @@ package views
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
@@ -45,9 +44,7 @@ func HandleUsers(s store.Store) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusAccepted)
-		json.NewEncoder(w).Encode(user)
-		fmt.Fprintln(w)
+		writeResponse(w, http.StatusAccepted, user)
 		return
 	}
 }
@@ -67,9 +64,7 @@ func HandleUser(s store.Store) http.HandlerFunc {
 			return
 		}
 
-		w.WriteHeader(http.StatusAccepted)
-		json.NewEncoder(w).Encode(user)
-		fmt.Fprintln(w)
+		writeResponse(w, http.StatusAccepted, user)
 		return
 	}
 }

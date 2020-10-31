@@ -29,8 +29,14 @@ func validDate(date time.Time) error {
 	return nil
 }
 
-func handleError(w http.ResponseWriter, errStatus int, apiErr interface{}) {
+func writeError(w http.ResponseWriter, errStatus int, apiErr interface{}) {
 	w.WriteHeader(errStatus)
 	json.NewEncoder(w).Encode(&apiErr)
+	fmt.Fprintln(w)
+}
+
+func writeResponse(w http.ResponseWriter, status int, data interface{}) {
+	w.WriteHeader(status)
+	json.NewEncoder(w).Encode(data)
 	fmt.Fprintln(w)
 }
