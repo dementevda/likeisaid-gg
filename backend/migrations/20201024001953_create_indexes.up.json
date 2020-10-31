@@ -12,10 +12,9 @@
             },
             {
                 "key": {
-                    "login": 1,
-                    "auth_engine": 1
+                    "login": 1
                 },
-                "name": "unique_auth_engine",
+                "name": "unique_login",
                 "unique": true,
                 "background": true
             }

@@ -3,7 +3,7 @@ package mongostorage
 import (
 	"context"
 
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api/models"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

@@ -8,6 +8,7 @@ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dementevda/likeisaid-gg v0.0.0-20201023213541-c2e9cf9efa4c h1:SqABHEqKDlCapXW/0pgwzDKdO1BQ/RLFgmJJ+Sa2Jck=
+github.com/dementevda/likeisaid-gg v0.0.0-20201029192020-5825d800af0e h1:PyOC1jIr9e/R8QnwJaxvvxhs/lKcM9+IvDkAqc8aU3E=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
 github.com/go-stack/stack v1.8.0 h1:5SgMzNM5HxrEjV0ww2lTmX6E2Izsfxas4+YHWRs3Lsk=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=

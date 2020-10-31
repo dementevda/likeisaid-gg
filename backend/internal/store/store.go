@@ -1,6 +1,6 @@
 package store
 
-import "github.com/dementevda/likeisaid-gg/backend/cmd/api/models"
+import "github.com/dementevda/likeisaid-gg/backend/internal/api/models"
 
 //Store interface for API storage
 type Store interface {

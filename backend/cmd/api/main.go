@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/BurntSushi/toml"
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api"
 )
 
 var configPath string

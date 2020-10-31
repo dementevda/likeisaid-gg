@@ -7,9 +7,9 @@ import (
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api/apierrors"
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api/models"
-	"github.com/dementevda/likeisaid-gg/backend/cmd/store"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/apierrors"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/models"
+	"github.com/dementevda/likeisaid-gg/backend/internal/store"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 	"go.mongodb.org/mongo-driver/mongo"

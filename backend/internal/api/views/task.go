@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dementevda/likeisaid-gg/backend/cmd/store"
+	"github.com/dementevda/likeisaid-gg/backend/internal/store"
 	"github.com/gorilla/mux"
 )
 

@@ -2,7 +2,7 @@ build:
 	go build -v ./cmd/main.go
 
 run:
-	go run ./cmd/main.go
+	go run ./cmd/api/main.go
 
 test:
 	go test -v -race -timeout 60s -cover ./...

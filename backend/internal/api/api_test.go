@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api/views"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/views"
 	"github.com/stretchr/testify/assert"
 )
 

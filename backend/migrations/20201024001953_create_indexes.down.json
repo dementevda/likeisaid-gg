@@ -5,6 +5,6 @@
     },
     {
         "dropIndexes": "users",
-        "index": "unique_login_engine"
+        "index": "unique_login"
     }
 ]

@@ -1,6 +1,6 @@
 package api
 
-import "github.com/dementevda/likeisaid-gg/backend/cmd/store"
+import "github.com/dementevda/likeisaid-gg/backend/internal/store"
 
 // Config for API
 type Config struct {

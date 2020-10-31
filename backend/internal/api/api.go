@@ -3,9 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/dementevda/likeisaid-gg/backend/cmd/api/views"
-	"github.com/dementevda/likeisaid-gg/backend/cmd/store"
-	"github.com/dementevda/likeisaid-gg/backend/cmd/store/mongostorage"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/views"
+	"github.com/dementevda/likeisaid-gg/backend/internal/store"
+	"github.com/dementevda/likeisaid-gg/backend/internal/store/mongostorage"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
