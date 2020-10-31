@@ -25,31 +25,23 @@ func HandleUsers(s store.Store) http.HandlerFunc {
 		var newUser *models.CreateUser = &models.CreateUser{}
 
 		if err := decoder.Decode(newUser); err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "JSON decode error"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "JSON decode error"})
 			return
 		}
 
 		_, err := govalidator.ValidateStruct(newUser)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "Wrong parameters"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "Wrong parameters"})
 			return
 		}
 
 		user, err := s.AddUser(newUser)
 		switch {
 		case isDup(err):
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(&apierrors.UserError{Message: "User alredy in db", ErrType: "Exists"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusBadRequest, &apierrors.UserError{Message: "User alredy in db", ErrType: "Exists"})
 			return
 		case err != nil:
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "Error in saving user"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error in saving user"})
 			return
 		}
 
@@ -68,14 +60,10 @@ func HandleUser(s store.Store) http.HandlerFunc {
 		user, err := s.FindUser(login)
 		switch {
 		case errors.Is(err, mongo.ErrNoDocuments):
-			w.WriteHeader(http.StatusNotFound)
-			json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "Not Found"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusNotFound, &apierrors.UserError{Message: err.Error(), ErrType: "Not Found"})
 			return
 		case err != nil:
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "Error while searching user"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error while searching user"})
 			return
 		}
 

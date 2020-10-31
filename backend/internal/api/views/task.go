@@ -22,24 +22,18 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 			decoder := json.NewDecoder(r.Body)
 			newTaskJSON := &models.CreateTaskJson{}
 			if err := decoder.Decode(newTaskJSON); err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				json.NewEncoder(w).Encode(&apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
-				fmt.Fprintln(w)
+				handleError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
 				return
 			}
 
 			_, err := govalidator.ValidateStruct(newTaskJSON)
 			if err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				json.NewEncoder(w).Encode(&apierrors.TaskError{Message: err.Error(), ErrType: "Wrong parameters"})
-				fmt.Fprintln(w)
+				handleError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong parameters"})
 				return
 			}
 
 			if err := validDate(newTaskJSON.WaitBefore); err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				json.NewEncoder(w).Encode(&apierrors.TaskError{Message: err.Error(), ErrType: "Wrong parameters"})
-				fmt.Fprintln(w)
+				handleError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong parameters"})
 				return
 			}
 
@@ -60,9 +54,7 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 		// GET
 		tasks, err := s.GetUserTasks(r.Context().Value(apimiddlewares.CtxUserKey).(*models.User).Email)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(&apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
-			fmt.Fprintln(w)
+			handleError(w, http.StatusInternalServerError, &apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
 			return
 		}
 
@@ -81,9 +73,7 @@ func HandleTask(s store.Store) http.HandlerFunc {
 			taskID := mux.Vars(r)["id"]
 			task := checkTaskExists(s, taskID)
 			if task == nil {
-				w.WriteHeader(http.StatusNotFound)
-				json.NewEncoder(w).Encode(&apierrors.TaskError{Message: "", ErrType: "Not Found"})
-				fmt.Fprintln(w)
+				handleError(w, http.StatusNotFound, &apierrors.TaskError{Message: "", ErrType: "Not Found"})
 				return
 			}
 
@@ -91,18 +81,14 @@ func HandleTask(s store.Store) http.HandlerFunc {
 			updTaskJSON := &models.UpdateTaskJson{}
 
 			if err := decoder.Decode(updTaskJSON); err != nil {
-				w.WriteHeader(http.StatusBadRequest)
-				json.NewEncoder(w).Encode(&apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
-				fmt.Fprintln(w)
+				handleError(w, http.BadRequestotFound, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
 				return
 			}
 
 			updateTaskFields(task, updTaskJSON)
 
 			if err := s.EditTask(task); err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(&apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
-				fmt.Fprintln(w)
+				handleError(w, http.StatusInternalServerError, &apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
 				return
 			}
 

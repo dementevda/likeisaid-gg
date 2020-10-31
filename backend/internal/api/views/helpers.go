@@ -1,7 +1,10 @@
 package views
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"net/http"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,4 +27,10 @@ func validDate(date time.Time) error {
 		return errors.New("Date should be greater then now")
 	}
 	return nil
+}
+
+func handleError(w http.ResponseWriter, errStatus int, apiErr interface{}) {
+	w.WriteHeader(errStatus)
+	json.NewEncoder(w).Encode(&apiErr)
+	fmt.Fprintln(w)
 }
