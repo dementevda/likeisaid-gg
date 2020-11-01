@@ -19,5 +19,18 @@
                 "background": true
             }
         ]
+    },
+    {
+        "createIndexes": "tasks",
+        "indexes": [
+            {
+                "key": {
+                    "user_email": 1,
+                    "wait_before": 1
+                },
+                "name": "tasks_sort_by_asc_useremail_waitbefore",
+                "background": true
+            }
+        ]
     }
 ]

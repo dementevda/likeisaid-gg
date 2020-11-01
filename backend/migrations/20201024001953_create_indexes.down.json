@@ -6,5 +6,9 @@
     {
         "dropIndexes": "users",
         "index": "unique_login"
+    },
+    {
+        "DropIndexes": "tasks",
+        "index": "tasks_sort_by_asc_useremail_waitbefore"
     }
 ]
