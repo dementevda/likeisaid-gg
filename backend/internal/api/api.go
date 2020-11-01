@@ -7,6 +7,7 @@ import (
 	"github.com/dementevda/likeisaid-gg/backend/internal/api/views"
 	"github.com/dementevda/likeisaid-gg/backend/internal/store"
 	"github.com/dementevda/likeisaid-gg/backend/internal/store/mongostorage"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -63,8 +64,9 @@ func (api *API) configureLogger() error {
 
 func (api *API) configureRouter() {
 	// root router
-	api.router.HandleFunc("/hello", views.HandleHello()).Methods("GET")
 	api.router.Use(apimiddlewares.RequestID)
+	api.router.Use(apimiddlewares.RequestTimer(api.logger))
+	api.router.HandleFunc("/hello", views.HandleHello()).Methods("GET")
 
 	// /users router
 	userRouter := api.router.PathPrefix("/users").Subrouter()
@@ -76,6 +78,10 @@ func (api *API) configureRouter() {
 	taskRouter.Use(apimiddlewares.AuthUser(api.store))
 	taskRouter.HandleFunc("", views.HandleTasks(api.store)).Methods("POST", "GET")
 	taskRouter.HandleFunc("/{id}", views.HandleTask(api.store)).Methods("PATCH", "DELETE")
+
+	// metrics in gorutine and default router
+	http.Handle("/metrics", promhttp.Handler())
+	go http.ListenAndServe(":8082", nil)
 }
 
 func (api *API) configureStore() error {
