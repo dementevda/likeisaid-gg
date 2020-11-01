@@ -12,10 +12,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type ctxUserKeyType string
+
 // CtxUserKey ...
 const CtxUserKey ctxUserKeyType = "user"
-
-type ctxUserKeyType string
 
 // AuthUser дополнительное замыкание чтобы передать storage
 func AuthUser(s store.Store) func(next http.Handler) http.Handler {
@@ -24,7 +24,7 @@ func AuthUser(s store.Store) func(next http.Handler) http.Handler {
 			// TODO get token and inspect
 			user, err := s.GetUserByEmail("like@saifgd.gg")
 			if err != nil {
-				handleAuthErrors(err, w)
+				handleAuthErrors(err, w, r)
 				return
 			}
 
@@ -33,16 +33,22 @@ func AuthUser(s store.Store) func(next http.Handler) http.Handler {
 	}
 }
 
-func handleAuthErrors(err error, w http.ResponseWriter) {
+func handleAuthErrors(err error, w http.ResponseWriter, r *http.Request) {
 	switch {
 	case errors.Is(err, mongo.ErrNoDocuments):
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "Need registration"})
+		json.NewEncoder(w).Encode(&apierrors.APIError{
+			Message:   err.Error(),
+			ErrType:   "Need registration",
+			RequestID: r.Context().Value(СtxRequestIDKey).(string)})
 		fmt.Fprintln(w)
 		return
 	case err != nil:
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(&apierrors.UserError{Message: err.Error(), ErrType: "Error while searching user in middleware"})
+		json.NewEncoder(w).Encode(&apierrors.APIError{
+			Message:   err.Error(),
+			ErrType:   "Error while searching user in middleware",
+			RequestID: r.Context().Value(СtxRequestIDKey).(string)})
 		fmt.Fprintln(w)
 		return
 	}

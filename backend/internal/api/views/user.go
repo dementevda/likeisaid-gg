@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/dementevda/likeisaid-gg/backend/internal/api/apierrors"
 	"github.com/dementevda/likeisaid-gg/backend/internal/api/models"
 	"github.com/dementevda/likeisaid-gg/backend/internal/store"
 	"github.com/gorilla/mux"
@@ -24,23 +23,23 @@ func HandleUsers(s store.Store) http.HandlerFunc {
 		var newUser *models.CreateUser = &models.CreateUser{}
 
 		if err := decoder.Decode(newUser); err != nil {
-			writeError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "JSON decode error"})
+			writeError(w, r, http.StatusBadRequest, err.Error(), "JSON decode error")
 			return
 		}
 
 		_, err := govalidator.ValidateStruct(newUser)
 		if err != nil {
-			writeError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "Wrong parameters"})
+			writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong parameters")
 			return
 		}
 
 		user, err := s.AddUser(newUser)
 		switch {
 		case isDup(err):
-			writeError(w, http.StatusBadRequest, &apierrors.UserError{Message: "User alredy in db", ErrType: "Exists"})
+			writeError(w, r, http.StatusBadRequest, "User already in db", "Exists")
 			return
 		case err != nil:
-			writeError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error in saving user"})
+			writeError(w, r, http.StatusInternalServerError, err.Error(), "Error while saving user")
 			return
 		}
 
@@ -57,10 +56,10 @@ func HandleUser(s store.Store) http.HandlerFunc {
 		user, err := s.FindUser(login)
 		switch {
 		case errors.Is(err, mongo.ErrNoDocuments):
-			writeError(w, http.StatusNotFound, &apierrors.UserError{Message: err.Error(), ErrType: "Not Found"})
+			writeError(w, r, http.StatusNotFound, err.Error(), "Not Found")
 			return
 		case err != nil:
-			writeError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error while searching user"})
+			writeError(w, r, http.StatusInternalServerError, err.Error(), "Error while searching user")
 			return
 		}
 

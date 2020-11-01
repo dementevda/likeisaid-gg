@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/dementevda/likeisaid-gg/backend/internal/api/apierrors"
 	"github.com/dementevda/likeisaid-gg/backend/internal/api/apimiddlewares"
 	"github.com/dementevda/likeisaid-gg/backend/internal/api/models"
 	"github.com/dementevda/likeisaid-gg/backend/internal/store"
@@ -22,18 +21,19 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 			decoder := json.NewDecoder(r.Body)
 			newTaskJSON := &models.CreateTaskJson{}
 			if err := decoder.Decode(newTaskJSON); err != nil {
-				writeError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
+				writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong json")
+
 				return
 			}
 
 			_, err := govalidator.ValidateStruct(newTaskJSON)
 			if err != nil {
-				writeError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong parameters"})
+				writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong parameters")
 				return
 			}
 
 			if err := validDate(newTaskJSON.WaitBefore); err != nil {
-				writeError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong parameters"})
+				writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong parameters")
 				return
 			}
 
@@ -45,7 +45,7 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 
 			_, err = s.AddTask(newTask)
 			if err != nil {
-				writeError(w, http.StatusInternalServerError, &apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
+				writeError(w, r, http.StatusInternalServerError, err.Error(), "I am broken")
 				return
 			}
 			writeResponse(w, http.StatusAccepted, &emptyResponse{})
@@ -55,7 +55,7 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 		// GET
 		tasks, err := s.GetUserTasks(r.Context().Value(apimiddlewares.CtxUserKey).(*models.User).Email)
 		if err != nil {
-			writeError(w, http.StatusInternalServerError, &apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
+			writeError(w, r, http.StatusInternalServerError, err.Error(), "I am broken")
 			return
 		}
 
@@ -71,11 +71,11 @@ func HandleTask(s store.Store) http.HandlerFunc {
 
 		task := checkTaskExists(s, taskID)
 		if task == nil {
-			writeError(w, http.StatusNotFound, &apierrors.TaskError{Message: "", ErrType: "Not Found"})
+			writeError(w, r, http.StatusNotFound, "", "Task not found")
 			return
 		}
 		if task.UserEmail != r.Context().Value(apimiddlewares.CtxUserKey).(*models.User).Email {
-			writeError(w, http.StatusForbidden, &apierrors.TaskError{Message: "Not your task", ErrType: ""})
+			writeError(w, r, http.StatusForbidden, "", "Permissions denied")
 			return
 		}
 
@@ -86,14 +86,14 @@ func HandleTask(s store.Store) http.HandlerFunc {
 			updTaskJSON := &models.UpdateTaskJson{}
 
 			if err := decoder.Decode(updTaskJSON); err != nil {
-				writeError(w, http.StatusBadRequest, &apierrors.TaskError{Message: err.Error(), ErrType: "Wrong json"})
+				writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong json")
 				return
 			}
 
 			updateTaskFields(task, updTaskJSON)
 
 			if err := s.EditTask(task); err != nil {
-				writeError(w, http.StatusInternalServerError, &apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
+				writeError(w, r, http.StatusInternalServerError, err.Error(), "I am broken")
 				return
 			}
 

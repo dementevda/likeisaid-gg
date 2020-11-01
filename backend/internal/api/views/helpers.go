@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/apierrors"
+	"github.com/dementevda/likeisaid-gg/backend/internal/api/apimiddlewares"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -31,9 +33,14 @@ func validDate(date time.Time) error {
 	return nil
 }
 
-func writeError(w http.ResponseWriter, errStatus int, apiErr interface{}) {
+func writeError(w http.ResponseWriter, r *http.Request, errStatus int, errText string, errType string) {
+	apiErr := &apierrors.APIError{
+		Message:   errText,
+		ErrType:   errType,
+		RequestID: r.Context().Value(apimiddlewares.СtxRequestIDKey).(string)}
+
 	w.WriteHeader(errStatus)
-	json.NewEncoder(w).Encode(&apiErr)
+	json.NewEncoder(w).Encode(apiErr)
 	fmt.Fprintln(w)
 }
 

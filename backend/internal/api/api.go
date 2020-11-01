@@ -64,6 +64,7 @@ func (api *API) configureLogger() error {
 func (api *API) configureRouter() {
 	// root router
 	api.router.HandleFunc("/hello", views.HandleHello()).Methods("GET")
+	api.router.Use(apimiddlewares.RequestID)
 
 	// /users router
 	userRouter := api.router.PathPrefix("/users").Subrouter()
