@@ -10,6 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type emptyResponse struct{}
+
 func isDup(err error) bool {
 	var e mongo.WriteException
 	if errors.As(err, &e) {

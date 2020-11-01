@@ -43,13 +43,12 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 				CreatedAt:      time.Now(),
 			}
 
-			user, err := s.AddTask(newTask)
+			_, err = s.AddTask(newTask)
 			if err != nil {
 				writeError(w, http.StatusInternalServerError, &apierrors.TaskError{Message: err.Error(), ErrType: "I am broken"})
 				return
 			}
-			writeResponse(w, http.StatusAccepted, interface{})
-
+			writeResponse(w, http.StatusAccepted, &emptyResponse{})
 			return
 		}
 
@@ -98,14 +97,14 @@ func HandleTask(s store.Store) http.HandlerFunc {
 				return
 			}
 
-			writeResponse(w, http.StatusAccepted, interface{})
+			writeResponse(w, http.StatusAccepted, &emptyResponse{})
 			return
 		}
 
 		// DELETE
 		if r.Method == http.MethodDelete {
 			s.DeleteTask(taskID)
-			writeResponse(w, http.StatusAccepted, interface{})
+			writeResponse(w, http.StatusAccepted, &emptyResponse{})
 		}
 	}
 }

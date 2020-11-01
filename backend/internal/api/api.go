@@ -62,22 +62,29 @@ func (api *API) configureLogger() error {
 }
 
 func (api *API) configureRouter() {
-	// todo not use then create user
-	api.router.Use(apimiddlewares.AuthUser(api.store))
-
+	// root router
 	api.router.HandleFunc("/hello", views.HandleHello()).Methods("GET")
-	api.router.HandleFunc("/users", views.HandleUsers(api.store)).Methods("POST")
-	api.router.HandleFunc("/users/{login}", views.HandleUser(api.store)).Methods("GET")
-	api.router.HandleFunc("/tasks", views.HandleTasks(api.store)).Methods("POST", "GET")
-	api.router.HandleFunc("/tasks/{id}", views.HandleTask(api.store)).Methods("PATCH", "DELETE")
+
+	// /users router
+	userRouter := api.router.PathPrefix("/users").Subrouter()
+	userRouter.HandleFunc("", views.HandleUsers(api.store)).Methods("POST")
+	userRouter.HandleFunc("/{login}", views.HandleUser(api.store)).Methods("GET")
+
+	// /tasks router
+	taskRouter := api.router.PathPrefix("/tasks").Subrouter()
+	taskRouter.Use(apimiddlewares.AuthUser(api.store))
+	taskRouter.HandleFunc("", views.HandleTasks(api.store)).Methods("POST", "GET")
+	taskRouter.HandleFunc("/{id}", views.HandleTask(api.store)).Methods("PATCH", "DELETE")
 }
 
 func (api *API) configureStore() error {
+	api.logger.Info("Connecting to storage")
 	store := mongostorage.New(api.config.Store)
 	if err := store.Open(); err != nil {
+		api.logger.Error("Fails to connect to storage")
 		return err
 	}
-
+	api.logger.Info("Connected")
 	api.store = store
 
 	return nil

@@ -24,23 +24,23 @@ func HandleUsers(s store.Store) http.HandlerFunc {
 		var newUser *models.CreateUser = &models.CreateUser{}
 
 		if err := decoder.Decode(newUser); err != nil {
-			handleError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "JSON decode error"})
+			writeError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "JSON decode error"})
 			return
 		}
 
 		_, err := govalidator.ValidateStruct(newUser)
 		if err != nil {
-			handleError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "Wrong parameters"})
+			writeError(w, http.StatusBadRequest, &apierrors.UserError{Message: err.Error(), ErrType: "Wrong parameters"})
 			return
 		}
 
 		user, err := s.AddUser(newUser)
 		switch {
 		case isDup(err):
-			handleError(w, http.StatusBadRequest, &apierrors.UserError{Message: "User alredy in db", ErrType: "Exists"})
+			writeError(w, http.StatusBadRequest, &apierrors.UserError{Message: "User alredy in db", ErrType: "Exists"})
 			return
 		case err != nil:
-			handleError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error in saving user"})
+			writeError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error in saving user"})
 			return
 		}
 
@@ -57,10 +57,10 @@ func HandleUser(s store.Store) http.HandlerFunc {
 		user, err := s.FindUser(login)
 		switch {
 		case errors.Is(err, mongo.ErrNoDocuments):
-			handleError(w, http.StatusNotFound, &apierrors.UserError{Message: err.Error(), ErrType: "Not Found"})
+			writeError(w, http.StatusNotFound, &apierrors.UserError{Message: err.Error(), ErrType: "Not Found"})
 			return
 		case err != nil:
-			handleError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error while searching user"})
+			writeError(w, http.StatusInternalServerError, &apierrors.UserError{Message: err.Error(), ErrType: "Error while searching user"})
 			return
 		}
 

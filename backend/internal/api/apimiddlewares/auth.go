@@ -22,7 +22,7 @@ func AuthUser(s store.Store) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// TODO get token and inspect
-			user, err := s.GetUserByEmail("like@said.gg")
+			user, err := s.GetUserByEmail("like@saifgd.gg")
 			if err != nil {
 				handleAuthErrors(err, w)
 				return
