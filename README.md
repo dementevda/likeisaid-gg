@@ -3,7 +3,7 @@ likeisaid pet project
 
 trying to do and learn somthing
 
-## TODO
+## TODO BACKEND
 1) Валидацию токенов в auth.go
 2) Запуск метрик в мэйне? остановка горутины метрик
 3) Обогощать метрики инфой по запросам
