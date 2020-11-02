@@ -11,8 +11,20 @@ type Store interface {
 	GetUserByEmail(email string) (*models.User, error)
 
 	AddTask(*models.CreateTask) (*models.Task, error)
-	GetUserTasks(string) ([]*models.Task, error)
+	GetUserTasks(string, *TaskFilters) ([]*models.Task, error)
 	GetTaskByID(string) (*models.Task, error)
 	EditTask(*models.Task) error
 	DeleteTask(string) error
+}
+
+type TaskFilters struct {
+	Done  bool
+	Limit int64
+	Page  int64
+}
+
+func (f *TaskFilters) Defaults() {
+	f.Done = false
+	f.Limit = 10
+	f.Page = 1
 }

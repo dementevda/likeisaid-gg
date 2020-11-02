@@ -29,7 +29,6 @@ type CreateTask struct {
 // CreateTaskJson for creating new tasks
 type CreateTaskJson struct {
 	Title       string    `bson:"title" json:"title" valid:"required"`
-	Defendant   string    `bson:"defendant" json:"defendant"`
 	Description string    `bson:"description" json:"description" valid:"required"`
 	WaitBefore  time.Time `bson:"wait_before" json:"wait_before" valid:"required"`
 }
@@ -37,7 +36,6 @@ type CreateTaskJson struct {
 // UpdateTaskJson ...
 type UpdateTaskJson struct {
 	Title       string    `bson:"title" json:"title,omitempty"`
-	Defendant   string    `bson:"defendant" json:"defendant,omitempty"`
 	Description string    `bson:"description" json:"description,omitempty"`
 	WaitBefore  time.Time `bson:"wait_before" json:"wait_before,omitempty"`
 }

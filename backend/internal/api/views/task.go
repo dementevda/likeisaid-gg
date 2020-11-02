@@ -3,6 +3,8 @@ package views
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/asaskevich/govalidator"
@@ -53,7 +55,10 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 		}
 
 		// GET
-		tasks, err := s.GetUserTasks(r.Context().Value(apimiddlewares.CtxUserKey).(*models.User).Email)
+		tasks, err := s.GetUserTasks(
+			r.Context().Value(apimiddlewares.CtxUserKey).(*models.User).Email,
+			getParams(r.URL.Query()),
+		)
 		if err != nil {
 			writeError(w, r, http.StatusInternalServerError, err.Error(), "I am broken")
 			return
@@ -118,9 +123,6 @@ func checkTaskExists(s store.Store, id string) *models.Task {
 }
 
 func updateTaskFields(task *models.Task, upd *models.UpdateTaskJson) {
-	if upd.Defendant != "" {
-		task.Defendant = upd.Defendant
-	}
 	if upd.Title != "" {
 		task.Title = upd.Title
 	}
@@ -131,4 +133,18 @@ func updateTaskFields(task *models.Task, upd *models.UpdateTaskJson) {
 	if upd.Description != "" {
 		task.Description = upd.Description
 	}
+}
+
+func getParams(values url.Values) *store.TaskFilters {
+	p := &store.TaskFilters{}
+	doneParam := values.Get("done")
+	p.Done, _ = strconv.ParseBool(doneParam)
+
+	limitParam := values.Get("limit")
+	p.Limit, _ = strconv.ParseInt(limitParam, 10, 64)
+
+	pageParam := values.Get("page")
+	p.Page, _ = strconv.ParseInt(pageParam, 10, 64)
+
+	return p
 }

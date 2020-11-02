@@ -4,20 +4,21 @@ import (
 	"context"
 
 	"github.com/dementevda/likeisaid-gg/backend/internal/api/models"
+	"github.com/dementevda/likeisaid-gg/backend/internal/store"
+	pag "github.com/gobeam/mongo-go-pagination"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // AddTask adds task to database
-func (s *MongoStorage) AddTask(u *models.CreateTask) (*models.Task, error) {
-	added, err := s.Db.Collection("tasks").InsertOne(context.TODO(), u)
+func (s *MongoStorage) AddTask(t *models.CreateTask) (*models.Task, error) {
+	task := &models.Task{CreateTask: t}
+	added, err := s.Db.Collection("tasks").InsertOne(context.TODO(), task)
 	if err != nil {
 		return nil, err
 	}
-	task := models.Task{CreateTask: u, ID: added.InsertedID.(primitive.ObjectID)}
-
-	return &task, nil
+	task.ID = added.InsertedID.(primitive.ObjectID)
+	return task, nil
 
 }
 
@@ -57,31 +58,24 @@ func (s *MongoStorage) GetTaskByID(id string) (*models.Task, error) {
 }
 
 // GetUserTasks ...
-func (s *MongoStorage) GetUserTasks(email string) ([]*models.Task, error) {
-	// TODO paginatioin and filtering
-	tasks := make([]*models.Task, 0)
+func (s *MongoStorage) GetUserTasks(email string, filters *store.TaskFilters) ([]*models.Task, error) {
+	filter := bson.M{"user_email": email, "done": filters.Done}
+	collection := s.Db.Collection("tasks")
+	paginatedData, err := pag.New(collection).Limit(filters.Limit).Page(filters.Page).Sort("wait_before", 1).Filter(filter).Find()
 
-	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{"wait_before", 1}})
-	cur, err := s.Db.Collection("tasks").Find(context.TODO(), bson.M{"user_email": email}, findOptions)
 	if err != nil {
 		return nil, err
 	}
-	defer cur.Close(context.TODO())
 
-	for cur.Next(context.TODO()) {
-		result := &models.Task{}
-		err := cur.Decode(result)
-		if err != nil {
+	var taskSlice []*models.Task
+	for _, raw := range paginatedData.Data {
+		task := &models.Task{}
+		marshallErr := bson.Unmarshal(raw, task)
+		if marshallErr == nil {
+			taskSlice = append(taskSlice, task)
 
-			continue
 		}
-		tasks = append(tasks, result)
-
-	}
-	if err := cur.Err(); err != nil {
-		return nil, err
 	}
 
-	return tasks, err
+	return taskSlice, err
 }
