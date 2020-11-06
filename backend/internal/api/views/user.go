@@ -21,7 +21,6 @@ func HandleUsers(s store.Store) http.HandlerFunc {
 		decoder := json.NewDecoder(r.Body)
 
 		var newUser *models.CreateUser = &models.CreateUser{}
-
 		if err := decoder.Decode(newUser); err != nil {
 			writeError(w, r, http.StatusBadRequest, err.Error(), "JSON decode error")
 			return
@@ -63,7 +62,7 @@ func HandleUser(s store.Store) http.HandlerFunc {
 			return
 		}
 
-		writeResponse(w, http.StatusAccepted, user)
+		writeResponse(w, http.StatusOK, user)
 		return
 	}
 }

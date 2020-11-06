@@ -19,7 +19,6 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// POST
 		if r.Method == http.MethodPost {
-
 			decoder := json.NewDecoder(r.Body)
 			newTaskJSON := &models.CreateTaskJson{}
 			if err := decoder.Decode(newTaskJSON); err != nil {
@@ -27,7 +26,6 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 
 				return
 			}
-
 			_, err := govalidator.ValidateStruct(newTaskJSON)
 			if err != nil {
 				writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong parameters")
@@ -64,7 +62,7 @@ func HandleTasks(s store.Store) http.HandlerFunc {
 			return
 		}
 
-		writeResponse(w, http.StatusAccepted, tasks)
+		writeResponse(w, http.StatusOK, tasks)
 		return
 	}
 }
@@ -89,7 +87,6 @@ func HandleTask(s store.Store) http.HandlerFunc {
 
 			decoder := json.NewDecoder(r.Body)
 			updTaskJSON := &models.UpdateTaskJson{}
-
 			if err := decoder.Decode(updTaskJSON); err != nil {
 				writeError(w, r, http.StatusBadRequest, err.Error(), "Wrong json")
 				return
