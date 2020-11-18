@@ -1,4 +1,4 @@
-# likeisaid-gg
+# tasker-gg
 
 TODO - переименовать в чтото типа tasker
 
