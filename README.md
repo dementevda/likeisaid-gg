@@ -25,7 +25,7 @@ TODO - переименовать в чтото типа tasker
 10) Добавить сваггер
 11) Прикрутить github actions которые бы запускали команды мэйкфайла и чекали тесты, линтеры, тп
 
-## Полезный линки
+## Полезный ссылки
 ### Backend
 1) https://github.com/avelino/awesome-go
 2) https://github.com/golang-standards/project-layout
