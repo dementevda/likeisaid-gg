@@ -29,4 +29,5 @@ TODO - переименовать в чтото типа tasker
 ### Backend
 1) https://github.com/avelino/awesome-go
 2) https://github.com/golang-standards/project-layout
-3) https://github.com/kubernetes-sigs/kubespray
+### Infra
+1) https://github.com/kubernetes-sigs/kubespray
