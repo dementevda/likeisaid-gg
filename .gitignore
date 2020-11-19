@@ -262,3 +262,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains+all,pycharm+all,go,react,vscode,macos,linux,windows
+
+.venv
+.vscode
